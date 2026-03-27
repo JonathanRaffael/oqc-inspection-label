@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String?
+  email        String         @unique
+  password     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  labels       Label[]
+  printHistory PrintHistory[]
+  templates    Template[]
+}
+
+model Label {
+  id                 String    @id @default(cuid())
+  type               String    @default("pack")
+  partDescription    String?
+  partNo             String?
+  computerNo         String?
+  lotNo              String?
+  hardness           String?
+  color              String?
+  materialName       String?
+  date               String?
+  quantity           Int?
+  binQuantity        Int?
+  unit               UnitType?
+  netWeight          Float?
+  netWeightUnit      UnitType?
+  grossWeight        Float?
+  grossWeightUnit    UnitType?
+  binNetWeight       Float?
+  binNetWeightUnit   UnitType?
+  binGrossWeight     Float?
+  binGrossWeightUnit UnitType?
+  inspector          String?
+  showVulcanization  Boolean   @default(false)
+  productName        String?
+  doNo               String?
+  poNo               String?
+  qty                String?
+  package            String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Label_userId_fkey")
+}
+
+model Template {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   @default("pack")
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Template_userId_fkey")
+}
+
+model Item {
+  id                 String    @id @default(cuid())
+  partNo             String
+  description        String
+  computerName       String
+  lotNo              String?
+  hardness           String
+  color              String
+  materialName       String
+  quantity           Int
+  binQuantity        Int?
+  unit               UnitType?
+  netWeight          Float
+  netWeightUnit      UnitType?
+  grossWeight        Float
+  grossWeightUnit    UnitType?
+  binNetWeight       Float?
+  binNetWeightUnit   UnitType?
+  binGrossWeight     Float?
+  binGrossWeightUnit UnitType?
+  inspector          String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model PrintHistory {
+  id                 String    @id @default(cuid())
+  userId             String
+  labelType          String
+  labelCount         Int       @default(1)
+  partNo             String?
+  partDescription    String?
+  productName        String?
+  computerNo         String?
+  lotNo              String?
+  hardness           String?
+  color              String?
+  materialName       String?
+  quantity           String?
+  binQuantity        String?
+  netWeight          Float?
+  netWeightUnit      UnitType?
+  grossWeight        Float?
+  grossWeightUnit    UnitType?
+  binNetWeight       Float?
+  binNetWeightUnit   UnitType?
+  binGrossWeight     Float?
+  binGrossWeightUnit UnitType?
+  inspector          String?
+  doNo               String?
+  poNo               String?
+  package            String?
+  date               String?
+  showVulcanization  Boolean   @default(false)
+  printedAt          DateTime  @default(now())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([labelType])
+  @@index([printedAt])
+  @@index([partNo])
+  @@index([lotNo])
+}
+
+enum UnitType {
+  Pcs
+  M
+  Kg
+  Ltr
+  Set
+  Unit
+}
