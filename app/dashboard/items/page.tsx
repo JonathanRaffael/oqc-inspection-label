@@ -56,6 +56,27 @@ function InputField({ label, keyName, type = "text", fullWidth = false, value, o
   )
 }
 
+/* ================= SELECT COMPONENT ================= */
+const UNIT_OPTIONS = ["Pcs", "M", "Kg", "Ltr", "Set", "Unit"]
+
+function SelectField({ label, value, onChange }: any) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <select
+        value={value ?? ""}
+        onChange={onChange}
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
+      >
+        <option value="">Select Unit</option>
+        {UNIT_OPTIONS.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+    </div>
+  )
+}
+
 /* ================= SECTION COMPONENT ================= */
 function Section({ title, description, children }: any) {
   return (
@@ -392,9 +413,8 @@ export default function ItemsPage() {
                       value={formData.quantity}
                       onChange={(e: any) => setFormData({ ...formData, quantity: Number(e.target.value) })}
                     />
-                    <InputField 
+                    <SelectField 
                       label="Unit of Measure" 
-                      keyName="unit"
                       value={formData.unit}
                       onChange={(e: any) => setFormData({ ...formData, unit: e.target.value })}
                     />
@@ -419,9 +439,8 @@ export default function ItemsPage() {
                         value={formData.netWeight}
                         onChange={(e: any) => setFormData({ ...formData, netWeight: Number(e.target.value) })}
                       />
-                      <InputField 
+                      <SelectField 
                         label="Net Weight (Unit)" 
-                        keyName="netWeightUnit"
                         value={formData.netWeightUnit}
                         onChange={(e: any) => setFormData({ ...formData, netWeightUnit: e.target.value })}
                       />
@@ -434,9 +453,8 @@ export default function ItemsPage() {
                         value={formData.grossWeight}
                         onChange={(e: any) => setFormData({ ...formData, grossWeight: Number(e.target.value) })}
                       />
-                      <InputField 
+                      <SelectField  
                         label="Gross Weight (Unit)" 
-                        keyName="grossWeightUnit"
                         value={formData.grossWeightUnit}
                         onChange={(e: any) => setFormData({ ...formData, grossWeightUnit: e.target.value })}
                       />
@@ -455,9 +473,8 @@ export default function ItemsPage() {
                         value={formData.binNetWeight}
                         onChange={(e: any) => setFormData({ ...formData, binNetWeight: Number(e.target.value) })}
                       />
-                      <InputField 
+                      <SelectField  
                         label="Bin Net Weight (Unit)" 
-                        keyName="binNetWeightUnit"
                         value={formData.binNetWeightUnit}
                         onChange={(e: any) => setFormData({ ...formData, binNetWeightUnit: e.target.value })}
                       />
@@ -470,9 +487,8 @@ export default function ItemsPage() {
                         value={formData.binGrossWeight}
                         onChange={(e: any) => setFormData({ ...formData, binGrossWeight: Number(e.target.value) })}
                       />
-                      <InputField 
+                      <SelectField 
                         label="Bin Gross Weight (Unit)" 
-                        keyName="binGrossWeightUnit"
                         value={formData.binGrossWeightUnit}
                         onChange={(e: any) => setFormData({ ...formData, binGrossWeightUnit: e.target.value })}
                       />
