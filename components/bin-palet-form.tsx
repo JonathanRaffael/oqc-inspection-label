@@ -413,18 +413,6 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
       return
     }
 
-    const requiredField = type === "bin" ? "partDescription" : "partNo"
-    if (!(formData as any)[requiredField] || !(formData as any).partNo) {
-      toast({
-        title: "Required fields missing",
-        description: `Please fill in ${
-          type === "bin" ? "Part Description and " : ""
-        }${type === "palet" ? "Computer Name (Part No field) and " : ""}Part No.`,
-        variant: "destructive",
-      })
-      return
-    }
-
     const newLabel =
       type === "bin"
         ? ({ ...(formData as BinFormData), showVulcanization, labelQuantity } as BinLabelData)
@@ -473,18 +461,6 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
   }
 
   const handleFillAllWithSameData = () => {
-    const requiredField = type === "bin" ? "partDescription" : "partNo"
-    if (!(formData as any)[requiredField] || !(formData as any).partNo) {
-      toast({
-        title: "Required fields missing",
-        description: `Please fill in ${
-          type === "bin" ? "Part Description and " : ""
-        }${type === "palet" ? "Computer Name (Part No field) and " : ""}Part No before filling all labels.`,
-        variant: "destructive",
-      })
-      return
-    }
-
     const currentTotal = labelList.reduce((sum, label) => sum + label.labelQuantity, 0)
     const remainingSlots = maxLabels - currentTotal
 
@@ -545,18 +521,6 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
   }
 
   const handleQuickPrint = async () => {
-    const requiredField = type === "bin" ? "partDescription" : "partNo"
-    if (!(formData as any)[requiredField] || !(formData as any).partNo) {
-      toast({
-        title: "Required fields missing",
-        description: `Please fill in ${
-          type === "bin" ? "Part Description and " : ""
-        }${type === "palet" ? "Computer Name (Part No field) and " : ""}Part No before quick print.`,
-        variant: "destructive",
-      })
-      return
-    }
-
     const currentTotal = labelList.reduce((sum, label) => sum + label.labelQuantity, 0)
     const remainingSlots = maxLabels - currentTotal
 
