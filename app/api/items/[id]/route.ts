@@ -74,6 +74,47 @@ export async function PUT(
   }
 }
 
+/* =========================
+   TOGGLE ITEM STATUS
+========================= */
+export async function PATCH(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+
+    const body = await req.json()
+
+    const existing = await prisma.item.findUnique({
+      where: { id: params.id }
+    })
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Item not found" },
+        { status: 404 }
+      )
+    }
+
+    const item = await prisma.item.update({
+      where: { id: params.id },
+      data: {
+        status: body.status
+      }
+    })
+
+    return NextResponse.json(item)
+
+  } catch (err) {
+
+    console.error("[PATCH /api/items/:id]", err)
+
+    return NextResponse.json(
+      { error: "Failed to update status" },
+      { status: 500 }
+    )
+  }
+}
 
 /* =========================
    DELETE ITEM

@@ -71,6 +71,7 @@ export async function GET(request: Request) {
 
     /* =========================
        3. LOOKUP ITEM
+       (Dipakai Auto Generate)
     ========================== */
 
     let item = null
@@ -78,7 +79,8 @@ export async function GET(request: Request) {
     if (computerName) {
       item = await prisma.item.findFirst({
         where: {
-          computerName: computerName
+          computerName,
+          status: "ACTIVE"
         }
       })
     }
@@ -86,7 +88,8 @@ export async function GET(request: Request) {
     if (!item && partNo) {
       item = await prisma.item.findFirst({
         where: {
-          partNo: partNo
+          partNo,
+          status: "ACTIVE"
         }
       })
     }
@@ -94,8 +97,12 @@ export async function GET(request: Request) {
     if (!item) {
 
       return NextResponse.json(
-        { error: "Item not found" },
-        { status: 404 }
+        {
+          error: "Item tidak ditemukan atau sudah dinonaktifkan"
+        },
+        {
+          status: 404
+        }
       )
 
     }
@@ -107,11 +114,16 @@ export async function GET(request: Request) {
     console.error("[GET /api/items]", err)
 
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      {
+        error: "Internal server error"
+      },
+      {
+        status: 500
+      }
     )
 
   }
+
 }
 
 

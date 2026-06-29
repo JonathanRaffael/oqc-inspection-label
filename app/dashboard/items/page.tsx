@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { DashboardHeaderWithBreadcrumb } from "@/components/dashboard/header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import {
   Package2,
   Search,
@@ -39,6 +38,7 @@ type Item = {
   binGrossWeight?: number | null
   binGrossWeightUnit?: string | null
   inspector?: string | null
+  status: "ACTIVE" | "INACTIVE"
 }
 
 /* ================= INPUT COMPONENT ================= */
@@ -141,6 +141,38 @@ export default function ItemsPage() {
     fetchItems()
   }
 
+  const handleToggleStatus = async (item: Item) => {
+
+  const newStatus =
+    item.status === "ACTIVE"
+      ? "INACTIVE"
+      : "ACTIVE"
+
+  const confirmText =
+    newStatus === "INACTIVE"
+      ? "Yakin ingin menonaktifkan item ini?"
+      : "Yakin ingin mengaktifkan kembali item ini?"
+
+  if (!confirm(confirmText)) return
+
+  const res = await fetch(`/api/items/${item.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      status: newStatus,
+    }),
+  })
+
+  if (!res.ok) {
+    alert("Gagal mengubah status")
+    return
+  }
+
+  fetchItems()
+}
+
   /* ================= SUBMIT ================= */
   const handleSubmit = async () => {
 
@@ -229,7 +261,9 @@ export default function ItemsPage() {
                     <th className="p-4 text-left">Weight</th>
                     <th className="p-4 text-left">Bin Details</th>
                     <th className="p-4 text-center">Inspector</th>
+                    <th className="p-4 text-center">Status</th>
                     <th className="p-4 text-right">Actions</th>
+
                   </tr>
                 </thead>
 
@@ -237,7 +271,16 @@ export default function ItemsPage() {
 
                   {items.map((item, index) => (
 
-                    <tr key={item.id} className={`border-b transition-colors hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} align-top`}>
+                    <tr
+  key={item.id}
+  className={`border-b transition-colors ${
+    item.status === "INACTIVE"
+      ? "bg-red-50 opacity-70"
+      : index % 2 === 0
+      ? "bg-white hover:bg-blue-50"
+      : "bg-gray-50 hover:bg-blue-50"
+  } align-top`}
+>
 
                       {/* ITEM */}
                       <td className="p-4 space-y-1">
@@ -275,11 +318,27 @@ export default function ItemsPage() {
                         <div>Gross: <span className="font-medium">{item.binGrossWeight || "—"}</span></div>
                       </td>
 
-                      {/* INSPECTOR */}
-                      <td className="p-4 text-center text-gray-700">{item.inspector || "—"}</td>
+                      <td className="p-4 text-center text-gray-700">
+  {item.inspector || "—"}
+</td>
 
-                      {/* ACTION */}
-                      <td className="p-4 flex justify-end gap-2">
+<td className="p-4 text-center">
+  <Badge
+    className={
+      item.status === "ACTIVE"
+        ? "bg-green-100 text-green-700"
+        : "bg-red-100 text-red-700"
+    }
+  >
+    {item.status}
+  </Badge>
+</td>
+
+{/* ACTION */}
+<td className="p-4">
+  <div className="flex justify-end gap-2"></div>
+
+                      
                         <Button
                           size="sm"
                           variant="outline"
@@ -291,6 +350,21 @@ export default function ItemsPage() {
                         >
                           <Pencil className="w-4 h-4" />
                         </Button>
+
+                        <Button
+  size="sm"
+  variant="outline"
+  className={
+    item.status === "ACTIVE"
+      ? "hover:bg-yellow-50 text-yellow-600"
+      : "hover:bg-green-50 text-green-600"
+  }
+  onClick={() => handleToggleStatus(item)}
+>
+  {item.status === "ACTIVE"
+    ? "Nonaktif"
+    : "Aktifkan"}
+</Button>
 
                         <Button
                           size="sm"

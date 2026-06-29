@@ -90,6 +90,10 @@ model Item {
   binGrossWeight     Float?
   binGrossWeightUnit UnitType?
   inspector          String?
+
+  // Status Item
+  status ItemStatus @default(ACTIVE)
+  
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
@@ -142,4 +146,9 @@ enum UnitType {
   Ltr
   Set
   Unit
+}
+
+enum ItemStatus {
+  ACTIVE
+  INACTIVE
 }
