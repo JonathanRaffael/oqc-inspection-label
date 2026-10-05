@@ -19,6 +19,7 @@ interface BinFormData {
   grossWeightUnit: string
   inspector: string
   showVulcanization: boolean
+  showOqcPassed: boolean
 }
 
 interface PaletFormData {
@@ -699,15 +700,17 @@ export const BinPaletPrintLayout = forwardRef<HTMLDivElement, BinPaletPrintLayou
                           flex: "0 0 33.33%",
                         }}
                       >
-                        <img
-                          src="/images/oqc-passed.png"
-                          alt="OQC Passed"
-                          style={{
-                            maxWidth: "98%",
-                            maxHeight: "98%",
-                            objectFit: "contain",
-                          }}
-                        />
+                        {(label as BinFormData).showOqcPassed && (
+  <img
+    src="/images/oqc-passed.png"
+    alt="OQC Passed"
+    style={{
+      maxWidth: "98%",
+      maxHeight: "98%",
+      objectFit: "contain",
+    }}
+  />
+)}
                       </div>
                     </div>
                   </>

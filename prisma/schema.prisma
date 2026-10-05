@@ -70,7 +70,7 @@ model Template {
 }
 
 model Item {
-  id                 String    @id @default(cuid())
+  id                 String     @id @default(cuid())
   partNo             String
   description        String
   computerName       String
@@ -90,12 +90,9 @@ model Item {
   binGrossWeight     Float?
   binGrossWeightUnit UnitType?
   inspector          String?
-
-  // Status Item
-  status ItemStatus @default(ACTIVE)
-  
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  status             ItemStatus @default(ACTIVE)
 }
 
 model PrintHistory {

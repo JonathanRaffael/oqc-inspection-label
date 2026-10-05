@@ -19,6 +19,7 @@ interface LabelData {
   grossWeightUnit: string
   inspector: string
   showVulcanization: boolean
+  showOqcPassed: boolean
 }
 
 interface PrintLayoutProps {
@@ -396,43 +397,52 @@ export const PrintLayout = forwardRef<HTMLDivElement, PrintLayoutProps>(
                 </div>
 
                 {/* Logo bawah */}
-                <div
-                  style={{
-                    borderTop: "1px solid black",
-                    display: "flex",
-                    height: isPreview ? "20px" : "9mm",
-                    marginTop: isPreview ? "3px" : "0.8mm",
-                    overflow: "visible",
-                  }}
-                >
-                  {["vulcanization.png", "rohs-ok.png", "oqc-passed.png"].map((img, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        borderRight: i < 2 ? "1px solid black" : "none",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "1px",
-                        overflow: "visible",
-                        flex: "0 0 33.33%",
-                        position: "relative",
-                      }}
-                    >
-                      {(img === "vulcanization.png" && label.showVulcanization) || img !== "vulcanization.png" ? (
-                        <img
-                          src={`/images/${img}`}
-                          alt={img}
-                          style={{
-                            maxWidth: img === "oqc-passed.png" ? "105%" : "98%",
-                            maxHeight: img === "oqc-passed.png" ? "105%" : "98%",
-                            objectFit: "contain",
-                          }}
-                        />
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
+<div
+  style={{
+    borderTop: "1px solid black",
+    display: "flex",
+    height: isPreview ? "20px" : "9mm",
+    marginTop: isPreview ? "3px" : "0.8mm",
+    overflow: "visible",
+  }}
+>
+  {["vulcanization.png", "rohs-ok.png", "oqc-passed.png"].map((img, i) => {
+    const shouldShow =
+      img === "vulcanization.png"
+        ? label.showVulcanization
+        : img === "oqc-passed.png"
+          ? label.showOqcPassed
+          : true
+
+    return (
+      <div
+        key={i}
+        style={{
+          borderRight: i < 2 ? "1px solid black" : "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1px",
+          overflow: "visible",
+          flex: "0 0 33.33%",
+          position: "relative",
+        }}
+      >
+        {shouldShow && (
+          <img
+            src={`/images/${img}`}
+            alt={img}
+            style={{
+              maxWidth: img === "oqc-passed.png" ? "105%" : "98%",
+              maxHeight: img === "oqc-passed.png" ? "105%" : "98%",
+              objectFit: "contain",
+            }}
+          />
+        )}
+      </div>
+    )
+  })}
+</div>
               </div>
             )
           })}

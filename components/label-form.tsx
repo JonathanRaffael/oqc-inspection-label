@@ -32,7 +32,10 @@ interface LabelData {
   grossWeight: string
   grossWeightUnit: string
   inspector: string
+
   showVulcanization: boolean
+  showOqcPassed: boolean
+
   labelQuantity: number
 }
 
@@ -54,6 +57,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
   const [isLoading, setIsLoading] = useState(false)
   const [isPrintLoading, setIsPrintLoading] = useState(false)
   const [showVulcanization, setShowVulcanization] = useState(label?.showVulcanization || false)
+  const [showOqcPassed, setShowOqcPassed] = useState(label?.showOqcPassed || true)
   const [templateName, setTemplateName] = useState("")
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [templates, setTemplates] = useState<Template[]>(initialTemplates)
@@ -317,6 +321,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
     const newLabel: LabelData = {
       ...formData,
       showVulcanization,
+      showOqcPassed,
       labelQuantity,
     }
 
@@ -341,6 +346,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
       inspector: "",
     })
     setShowVulcanization(false)
+    setShowOqcPassed(true)
     setLabelQuantity(1)
 
     toast({
@@ -366,6 +372,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
     const newLabel: LabelData = {
       ...formData,
       showVulcanization,
+      showOqcPassed,
       labelQuantity: remainingSlots,
     }
 
@@ -390,6 +397,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
       inspector: "",
     })
     setShowVulcanization(false)
+    setShowOqcPassed(true)
     setLabelQuantity(1)
 
     toast({
@@ -409,6 +417,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
       const newLabel: LabelData = {
         ...formData,
         showVulcanization,
+        showOqcPassed,
         labelQuantity: remainingSlots,
       }
       finalLabelList = [...labelList, newLabel]
@@ -456,6 +465,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
       const payload = {
         ...formData,
         showVulcanization,
+        showOqcPassed,
         type: "pack", // Changed from "oqc" to "pack"
       }
 
@@ -540,6 +550,7 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
           data: {
             ...formData,
             showVulcanization,
+            showOqcPassed,
           },
         }),
       })
@@ -606,6 +617,9 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
           setShowVulcanization(template.data.showVulcanization)
         }
       }
+        if (template.data.showOqcPassed !== undefined) {
+  setShowOqcPassed(template.data.showOqcPassed)
+}
 
       toast({
         title: "Template loaded",
@@ -812,16 +826,45 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
 
                 {/* Bottom Section */}
                 <div className="mt-6">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Checkbox
-                      id="vulcanization"
-                      checked={showVulcanization}
-                      onCheckedChange={(checked) => setShowVulcanization(checked === true)}
-                    />
-                    <Label htmlFor="vulcanization" className="text-sm font-medium">
-                      With Vulcanization
-                    </Label>
-                  </div>
+                  <div className="flex items-center gap-6 mb-4">
+
+  {/* Vulcanization */}
+  {/* Vulcanization */}
+  <div className="flex items-center space-x-2">
+    <Checkbox
+      id="vulcanization"
+      checked={showVulcanization}
+      onCheckedChange={(checked) =>
+        setShowVulcanization(checked === true)
+      }
+    />
+
+    <Label
+      htmlFor="vulcanization"
+      className="text-sm font-medium"
+    >
+      With Vulcanization
+    </Label>
+  </div>
+
+  {/* OQC Passed */}
+  <div className="flex items-center space-x-2">
+    <Checkbox
+      id="oqcPassed"
+      checked={showOqcPassed}
+      onCheckedChange={(checked) =>
+        setShowOqcPassed(checked === true)
+      }
+    />
+
+    <Label
+      htmlFor="oqcPassed"
+      className="text-sm font-medium"
+    >
+      Show OQC Passed
+    </Label>
+  </div>
+</div>
 
                   {/* Separator line above logos */}
                   <div className="border-t-2 border-black mb-2"></div>
@@ -850,15 +893,17 @@ export function LabelForm({ label, templates: initialTemplates = [] }: LabelForm
                       />
                     </div>
                     <div className="flex items-center justify-center p-2">
-                      <Image
-                        src="/images/oqc-passed.png"
-                        alt="OQC Passed"
-                        width={80}
-                        height={80}
-                        className="object-contain"
-                        priority
-                      />
-                    </div>
+  {showOqcPassed && (
+    <Image
+      src="/images/oqc-passed.png"
+      alt="OQC Passed"
+      width={80}
+      height={80}
+      className="object-contain"
+      priority
+    />
+  )}
+</div>
                   </div>
                 </div>
               </div>

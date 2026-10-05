@@ -33,6 +33,7 @@ interface BinLabelData {
   grossWeightUnit: string
   inspector: string
   showVulcanization: boolean
+  showOqcPassed: boolean
   labelQuantity: number
 }
 
@@ -96,6 +97,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
   const [isLoading, setIsLoading] = useState(false)
   const [isPrintLoading, setIsPrintLoading] = useState(false)
   const [showVulcanization, setShowVulcanization] = useState(label?.showVulcanization || false)
+  const [showOqcPassed, setShowOqcPassed] = useState(label?.showOqcPassed || true)
   const [templateName, setTemplateName] = useState("")
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [templates, setTemplates] = useState<Template[]>(initialTemplates)
@@ -415,7 +417,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
 
     const newLabel =
       type === "bin"
-        ? ({ ...(formData as BinFormData), showVulcanization, labelQuantity } as BinLabelData)
+        ? ({ ...(formData as BinFormData), showVulcanization, showOqcPassed, labelQuantity } as BinLabelData)
         : ({ ...(formData as PaletFormData), labelQuantity } as PaletLabelData)
 
     setLabelList((prev) => [...prev, newLabel])
@@ -453,6 +455,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
     }
     setShowVulcanization(false)
     setLabelQuantity(1)
+    setShowOqcPassed(true)
 
     toast({
       title: "Label added",
@@ -475,7 +478,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
 
     const newLabel =
       type === "bin"
-        ? ({ ...(formData as BinFormData), showVulcanization, labelQuantity: remainingSlots } as BinLabelData)
+        ? ({ ...(formData as BinFormData), showVulcanization, showOqcPassed, labelQuantity: remainingSlots } as BinLabelData)
         : ({ ...(formData as PaletFormData), labelQuantity: remainingSlots } as PaletLabelData)
 
     setLabelList((prev) => [...prev, newLabel])
@@ -512,7 +515,9 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
       } as BinFormData)
     }
     setShowVulcanization(false)
+    setShowOqcPassed(true)
     setLabelQuantity(1)
+
 
     toast({
       title: "All labels filled",
@@ -529,7 +534,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
     if (remainingSlots > 0) {
       const newLabel =
         type === "bin"
-          ? ({ ...(formData as BinFormData), showVulcanization, labelQuantity: remainingSlots } as BinLabelData)
+          ? ({ ...(formData as BinFormData), showVulcanization, showOqcPassed, labelQuantity: remainingSlots } as BinLabelData)
           : ({ ...(formData as PaletFormData), labelQuantity: remainingSlots } as PaletLabelData)
 
       finalLabelList = [...labelList, newLabel]
@@ -574,6 +579,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
       const payload = {
         ...formData,
         showVulcanization: type === "bin" ? showVulcanization : false,
+        showOqcPassed: type === "bin" ? showOqcPassed : true,
         type,
       }
 
@@ -650,6 +656,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
       } as BinFormData)
     }
     setShowVulcanization(false)
+    setShowOqcPassed(true)
   }
 
   const handleSaveTemplate = async () => {
@@ -672,6 +679,7 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
           data: {
             ...formData,
             showVulcanization: type === "bin" ? showVulcanization : false,
+            showOqcPassed: type === "bin" ? showOqcPassed : true,
           },
         }),
       })
@@ -715,6 +723,10 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
         if (type === "bin" && template.data.showVulcanization !== undefined) {
           setShowVulcanization(template.data.showVulcanization)
         }
+
+        if (type === "bin" && template.data.showOqcPassed !== undefined) {
+  setShowOqcPassed(template.data.showOqcPassed)
+}
       }
 
       toast({
@@ -1288,16 +1300,29 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
 
                 {/* Bottom logos */}
                 <div className="mt-6">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Checkbox
-                      id="vulcanization"
-                      checked={showVulcanization}
-                      onCheckedChange={(checked) => setShowVulcanization(checked === true)}
-                    />
-                    <Label htmlFor="vulcanization" className="text-sm font-medium">
-                      With Vulcanization
-                    </Label>
-                  </div>
+                  <div className="flex items-center gap-6 mb-4">
+  <div className="flex items-center space-x-2">
+    <Checkbox
+      id="vulcanization"
+      checked={showVulcanization}
+      onCheckedChange={(checked) => setShowVulcanization(checked === true)}
+    />
+    <Label htmlFor="vulcanization" className="text-sm font-medium">
+      With Vulcanization
+    </Label>
+  </div>
+
+  <div className="flex items-center space-x-2">
+    <Checkbox
+      id="oqcPassed"
+      checked={showOqcPassed}
+      onCheckedChange={(checked) => setShowOqcPassed(checked === true)}
+    />
+    <Label htmlFor="oqcPassed" className="text-sm font-medium">
+      Show OQC Passed
+    </Label>
+  </div>
+</div>
 
                   <div className="border-t-2 border-black mb-2"></div>
 
@@ -1325,15 +1350,17 @@ export function BinPaletForm({ label, type, templates: initialTemplates = [] }: 
                       />
                     </div>
                     <div className="flex items-center justify-center p-2">
-                      <Image
-                        src="/images/oqc-passed.png"
-                        alt="OQC Passed"
-                        width={80}
-                        height={80}
-                        className="object-contain"
-                        priority
-                      />
-                    </div>
+  {showOqcPassed && (
+    <Image
+      src="/images/oqc-passed.png"
+      alt="OQC Passed"
+      width={80}
+      height={80}
+      className="object-contain"
+      priority
+    />
+  )}
+</div>
                   </div>
                 </div>
               </div>
